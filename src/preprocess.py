@@ -33,6 +33,12 @@ def encode_and_scale_data(
 
     joblib.dump(scaler, "../models/robust_scaler.joblib")
 
+    # print(f"Describe X_train :\n {X_train_scaled.describe()}")
+    # print(f"Describe X_test :\n {X_test_scaled.describe()}")
+
+    # print(f"Info of X_train:\n {X_train.info()}")
+    # print(f"Info of X_test:\n {X_test.info()}")
+
     return X_train_scaled, X_test_scaled, y_train, y_test
 
 
@@ -53,6 +59,9 @@ def clean_and_optimize_data(df: pd.DataFrame) -> pd.DataFrame:
     df["Cholesterol"] = df["Cholesterol"].replace(0, mean_cholesterol)
 
     df = df.fillna(df.median(numeric_only=True))
+
+    # print(f"Info of df:\n {df.info()}")
+
     return df
 
 
