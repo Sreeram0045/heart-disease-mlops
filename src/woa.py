@@ -1,9 +1,14 @@
+import os
+
 import mlflow
 import numpy as np
 import pandas as pd
 import xgboost as xgb
 from pyMetaheuristic.algorithm import whale_optimization_algorithm
 from sklearn.model_selection import cross_validate
+
+# Import our centralized configuration!
+from config import get_xgb_params
 
 
 def run_woa_feature_selection(
@@ -19,32 +24,10 @@ def run_woa_feature_selection(
     # 1. Reproducibility
     np.random.seed(random_state)
 
-    # 2. Calculate Imbalance Ratio dynamically
-    ratio = float(np.sum(y_train == 0)) / np.sum(y_train == 1)
+    # 2. Get Centralized XGBoost Parameters (Ratio and CPU/GPU are handled inside!)
+    xgb_params = get_xgb_params(y_train, use_gpu=use_gpu, random_state=random_state)
 
-    # 3. Setup XGBoost Parameters (CPU vs GPU)
-    xgb_params = {
-        "objective": "binary:logistic",
-        "n_estimators": 150,
-        "learning_rate": 0.05,
-        "max_depth": 4,
-        "gamma": 1.0,
-        "reg_lambda": 10.0,
-        "reg_alpha": 1.0,
-        "subsample": 0.8,
-        "colsample_bytree": 0.8,
-        "scale_pos_weight": ratio,
-        "random_state": random_state,
-        "eval_metric": "logloss",
-    }
-
-    if use_gpu:
-        xgb_params["tree_method"] = "hist"
-        xgb_params["device"] = "cuda"
-    else:
-        xgb_params["tree_method"] = "hist"  # Hist runs efficiently on standard CPU
-
-    # 4. Define Logical Feature Groups
+    # 3. Define Logical Feature Groups
     feature_groups = [
         [0],  # 0: Age
         [1],  # 1: RestingBP
@@ -65,7 +48,7 @@ def run_woa_feature_selection(
     X_train_np = X_train.to_numpy(dtype="float32")
     y_train_np = y_train.to_numpy(dtype="int32")
 
-    # 5. Define the Fitness Function (Closure)
+    # 4. Define the Fitness Function (Closure)
     def fitness_function(variables):
         probs = np.array(variables)
         selected_logical_mask = probs > 0.5
@@ -101,7 +84,7 @@ def run_woa_feature_selection(
         combined_loss = (0.45 * error_auc) + (0.45 * error_f1) + (0.10 * feature_cost)
         return combined_loss
 
-    # 6. WOA Parameters
+    # 5. WOA Parameters
     woa_parameters = {
         "hunting_party": 50,  # Reduced slightly for faster local testing
         "iterations": 50,
@@ -118,7 +101,7 @@ def run_woa_feature_selection(
         target_function=fitness_function, **woa_parameters
     )
 
-    # 7. Decode the Best Solution
+    # 6. Decode the Best Solution
     best_variables = solution[:-1]
     final_logical_mask = np.array(best_variables) > 0.5
 
@@ -130,7 +113,7 @@ def run_woa_feature_selection(
     all_column_names = X_train.columns.tolist()
     selected_features = [all_column_names[i] for i in selected_col_indices]
 
-    # 8. Log to MLflow if a run is active
+    # 7. Log to MLflow if a run is active
     if mlflow.active_run():
         mlflow.log_param("woa_logical_features_kept", int(final_logical_mask.sum()))
         mlflow.log_param("woa_total_columns_kept", len(selected_features))
@@ -152,6 +135,11 @@ if __name__ == "__main__":
     if df is not None:
         df = clean_and_optimize_data(df)
         X_train, X_test, y_train, y_test = encode_and_scale_data(df)
+
+        # Force the database to ALWAYS be created in the root project folder
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        db_path = os.path.join(project_root, "mlflow.db")
+        mlflow.set_tracking_uri(f"sqlite:///{db_path}")
 
         # 2. Start an MLflow run strictly for testing
         mlflow.set_experiment("WOA_Local_Testing")
