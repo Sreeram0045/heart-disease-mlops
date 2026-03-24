@@ -45,9 +45,22 @@ def save_and_log_figures(model, X_test, y_test, model_name):
 
 
 def model_creation(
-    X_train, X_test, y_train, y_test, model_name="Baseline", use_gpu: bool = False
+    X_train,
+    X_test,
+    y_train,
+    y_test,
+    model_name="Baseline",
+    use_gpu: bool = False,
+    custom_params: dict | None = None,
 ):
-    xgb_params = get_xgb_params(y_train, use_gpu=use_gpu)
+
+    # If custom parameters (like Optuna's best params) are provided, use them!
+    # Otherwise, fallback to the default config parameters.
+    if custom_params:
+        xgb_params = custom_params
+    else:
+        xgb_params = get_xgb_params(y_train, use_gpu=use_gpu)
+
     model = xgb.XGBClassifier(**xgb_params)
     model.fit(X_train, y_train)
 
