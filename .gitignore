@@ -4,3 +4,4 @@
 /src/mlflow.db
 mlflow.db
 /reports
+/app/__pycache__
