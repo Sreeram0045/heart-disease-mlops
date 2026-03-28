@@ -90,3 +90,63 @@ graph TD
     classDef stepfun fill:#d97706,stroke:#fcd34d,stroke-width:2px,color:#fff;
     classDef emerald fill:#059669,stroke:#6ee7b7,stroke-width:2px,color:#fff;
 ```
+
+
+```mermaid
+%%{init: {'theme': 'neutral'}}%%
+graph TD
+    subgraph LANE_1 [" "]
+        direction TB
+        A[/"Raw Clinical CSV Data (15 Features)"/]:::data
+
+        Orchestrator{{"<b>run_pipeline.py</b><br/>(Master Orchestrator)<br/>Imports and executes all modules sequentially"}}:::orchest
+
+        subgraph MODULES ["Python Modules (Separation of Concerns)"]
+            direction TB
+            Config("<b>config.py</b><br/>- Centralized Base Parameters<br/>- CPU/GPU toggles"):::config
+            Preprocess("<b>preprocess.py</b><br/>- Data Cleaning & Outlier Handling<br/>- Encode categorical data<br/>- RobustScaler fit/transform"):::preprocess
+            WOA("<b>woa.py</b><br/>- Whale Optimization Algorithm<br/>- Narrows 11 concept features down to 5"):::woa
+            Optimize("<b>optimize.py</b><br/>- Optuna Bayesian Search (50 trials)<br/>- Blended Loss Minimization"):::optimize
+            Model("<b>model.py</b><br/>- XGBoost Ensemble Model"):::model
+        end
+
+        %% Orchestrator Control Flow (Dashed lines)
+        Orchestrator -.->|"Executes"| Preprocess
+        Orchestrator -.->|"Executes"| WOA
+        Orchestrator -.->|"Executes"| Optimize
+        Orchestrator -.->|"Executes"| Model
+
+        %% Centralized Config Feeding into modules
+        Config -.->|"Injects Params"| WOA
+        Config -.->|"Injects Params"| Model
+
+        %% True Data Flow (Solid lines)
+        A -->|"Read CSV"| Preprocess
+        Preprocess -->|"Fitted Scaler & Cleaned Data"| WOA
+        WOA -->|"Selected Features List"| Optimize
+        Optimize -->|"Optimized Hyperparameters"| Model
+
+        subgraph MLOPS ["MLflow Tracking & Local Storage"]
+            direction TB
+            MLflow[/"MLflow Tracking Server"/]:::mlops
+            WOA -.->|"log_param (features_list)"| MLflow
+            Optimize -.->|"log_params (best hyperparameters)"| MLflow
+            Model -.->|"log_metrics (Accuracy, Precision, Recall)<br/>log_model (XGBoost binary)"| MLflow
+            
+            E[("Local Directory (/models)")]:::storage
+            Model -->|"champion_model.joblib"| E
+            Preprocess -->|"robust_scaler.joblib"| E
+        end
+    end
+
+    %% Colorful Styling definitions
+    classDef data fill:#2563eb,stroke:#60a5fa,stroke-width:2px,color:#fff;
+    classDef config fill:#64748b,stroke:#94a3b8,stroke-width:2px,color:#fff;
+    classDef preprocess fill:#7c3aed,stroke:#a78bfa,stroke-width:2px,color:#fff;
+    classDef woa fill:#db2777,stroke:#f472b6,stroke-width:2px,color:#fff;
+    classDef optimize fill:#d97706,stroke:#fbbf24,stroke-width:2px,color:#fff;
+    classDef model fill:#059669,stroke:#34d399,stroke-width:2px,color:#fff;
+    classDef orchest fill:#0284c7,stroke:#38bdf8,stroke-width:2px,color:#fff;
+    classDef mlops fill:#0f766e,stroke:#2dd4bf,stroke-width:2px,color:#fff;
+    classDef storage fill:#475569,stroke:#94a3b8,stroke-width:2px,color:#fff;
+```
