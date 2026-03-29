@@ -110,7 +110,7 @@ graph TD
             BackendCall -->|"Accepts the response from local model"| LLM_Route
             LLM_Route --> PromptMandate
             
-            PromptMandate --> Attempt1("<b>ATTEMPT 1:</b><br/>Google SDK Call<br/><b>Gemini 3 Flash</b>"):::gemini
+            PromptMandate --> Attempt1("<b>ATTEMPT 1:</b><br/>Google SDK Call<br/><b>Gemini-3.1-Flash-Lite:Preview</b>"):::gemini
             
             Attempt1 -->|"Success"| SuccessRes["Human-Readable Summary"]:::emerald
             Attempt1 -.->|"Catch RateLimit / Timeout Error"| CatchBlock("Error Interceptor (Silent Failover)"):::fail
