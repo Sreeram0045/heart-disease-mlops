@@ -1,3 +1,57 @@
+# 🫀 Predictive Heart Intelligence
+
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)
+![Next.js](https://img.shields.io/badge/Next.js-14+-000000.svg)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)
+![MLflow](https://img.shields.io/badge/MLOps-MLflow-0194E2.svg)
+
+A Full-Stack, highly resilient Clinical AI Platform. This project transforms raw cardiovascular data into actionable clinical insights using a modular Machine Learning pipeline, a deterministic Fuzzy Logic safety net, and a Generative AI failover circuit breaker.
+
+---
+
+## 🏗️ System Architecture
+
+This system is built on a strict "Separation of Concerns" philosophy, divided into three core pipelines:
+
+### 1. The MLOps & Training Pipeline (Offline)
+Replaced messy Jupyter Notebooks with a highly modular Python architecture:
+* **Dimensionality Reduction (`woa.py`):** Utilizes the meta-heuristic Whale Optimization Algorithm (WOA) to aggressively filter 15 clinical features down to the 5 most critical predictive signals.
+* **Hyperparameter Tuning (`optimize.py`):** Uses Optuna (Bayesian Search) to minimize a custom blended loss function (balancing AUC, F1, and feature cost).
+* **Orchestration (`run_pipeline.py`):** Automates the ingestion, preprocessing (Robust Scaling), tuning, and training of the XGBoost ensemble model.
+* **Tracking:** Fully integrated with **MLflow** to log parameters, metrics, and model binaries locally.
+
+### 2. The Production Inference Engine (FastAPI & Docker)
+A lightweight, containerized Python backend deployed via Render.com:
+* **Defense in Depth:** Uses **Pydantic** to enforce strict mathematical boundaries on incoming clinical vitals, preventing "Garbage In, Garbage Out".
+* **Dual-Brain Inference:** 1.  Calculates exact disease probability using the tuned **XGBoost** model.
+    2.  Passes the probability and raw cholesterol through a **Scikit-Fuzzy** expert system. This deterministic logic engine overrides the ML model with a "Warning" or "Critical" score if biologically dangerous outliers are detected.
+
+### 3. The Full-Stack Frontend & LLM Resiliency (Next.js)
+A modern web application focused on highly defensive UX and zero-downtime AI:
+* **Client-Side Validation:** Highlights exact invalid form fields in real-time before network requests are made.
+* **The LLM Circuit Breaker:** Translates the raw ML/Fuzzy JSON into human-readable clinical summaries. To combat API rate limits, the system attempts to call **Google Gemini 3 Flash**. If a timeout or quota error occurs, a silent failover immediately routes the exact prompt to **Stepfun 3.5 Flash** (via OpenRouter).
+
+---
+
+## 🛠️ Tech Stack
+
+* **Machine Learning:** XGBoost, Scikit-Learn, Scikit-Fuzzy, pyMetaheuristic (WOA), Optuna
+* **MLOps:** MLflow, Joblib, Pandas, NumPy
+* **Backend:** FastAPI, Uvicorn, Pydantic, Python 3.10-slim
+* **Frontend:** Next.js (App Router), React, Tailwind CSS, Vercel AI SDK
+* **Infrastructure:** Docker, Render.com, Vercel
+
+---
+
+## 🚀 Local Installation & Setup
+
+### Prerequisites
+* Python 3.10+
+* Docker Desktop (Optional, for containerized running)
+* Node.js 18+ (For Frontend)
+
+
 ```mermaid
 %%{init: {'theme': 'neutral'}}%%
 graph TD
@@ -41,10 +95,8 @@ graph TD
     classDef brainxg fill:#059669,stroke:#34d399,stroke-width:2px,color:#fff;
     classDef brainfuzzy fill:#7c3aed,stroke:#a78bfa,stroke-width:2px,color:#fff;
     classDef merged fill:#0f766e,stroke:#5eead4,stroke-width:2px,color:#fff;
-```
 
 
-```mermaid
 %%{init: {'theme': 'neutral'}}%%
 graph TD
     subgraph WEB_APP [" "]
@@ -89,10 +141,8 @@ graph TD
     classDef gemini fill:#7c3aed,stroke:#c4b5fd,stroke-width:2px,color:#fff;
     classDef stepfun fill:#d97706,stroke:#fcd34d,stroke-width:2px,color:#fff;
     classDef emerald fill:#059669,stroke:#6ee7b7,stroke-width:2px,color:#fff;
-```
 
 
-```mermaid
 %%{init: {'theme': 'neutral'}}%%
 graph TD
     subgraph LANE_1 [" "]
