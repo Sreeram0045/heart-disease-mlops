@@ -43,6 +43,7 @@ A lightweight, containerized Python backend deployed via Render.com:
 * Docker Desktop (Optional, for containerized running)
 * Node.js 18+ (For Frontend)
 
+## Architecture Representation
 
 ```mermaid
 %%{init: {'theme': 'neutral'}}%%
