@@ -8,7 +8,7 @@ def build_fuzzy_system():
     Builds and returns the Fuzzy Logic Control System.
     It takes the ML Probability and the Patient's Cholesterol as inputs.
     """
-    # 1. Define Antecedents (Inputs) and Consequent (Output)
+    # 1. Antecedents (Inputs) and Consequent (Output)
     # ML Probability ranges from 0.0 to 1.0
     ml_prob = ctrl.Antecedent(np.arange(0, 1.01, 0.01), "ml_prob")
     # Raw Cholesterol usually ranges from ~100 to ~600
@@ -16,7 +16,7 @@ def build_fuzzy_system():
     # Our final Fuzzy Risk Score will be a 1-10 scale
     risk_score = ctrl.Consequent(np.arange(0, 10.1, 0.1), "risk_score")
 
-    # 2. Define Membership Functions (The exact clinical coordinates!)
+    # 2. Membership Functions
 
     # ML Probability Mappings
     ml_prob["low"] = fuzz.trapmf(ml_prob.universe, [0, 0, 0.3, 0.5])
