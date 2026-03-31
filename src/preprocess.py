@@ -50,7 +50,7 @@ def clean_and_optimize_data(df: pd.DataFrame) -> pd.DataFrame:
     if df.duplicated().sum() != 0:
         df.drop_duplicates(inplace=True)
 
-    # 1. Calculate the true mean (exactly as you did)
+    # 1. Calculate the true mean
     mean_bp = df["RestingBP"].replace(0, np.nan).mean()
     mean_cholesterol = df["Cholesterol"].replace(0, np.nan).mean()
 
