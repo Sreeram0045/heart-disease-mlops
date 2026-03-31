@@ -37,8 +37,11 @@ def build_fuzzy_system():
     # If the ML says low risk, and cholesterol is normal, the patient is safe.
     rule1 = ctrl.Rule(ml_prob["low"] & cholesterol["normal"], risk_score["safe"])
 
-    # If the ML says low risk, but cholesterol is high, raise a warning.
-    rule2 = ctrl.Rule(ml_prob["low"] & cholesterol["high"], risk_score["warning"])
+    # If the ML says low risk, but cholesterol is high or borderline, raise a warning.
+    rule2 = ctrl.Rule(
+        ml_prob["low"] & (cholesterol["borderline"] | cholesterol["high"]),
+        risk_score["warning"],
+    )
 
     # If the ML is unsure (medium), play it safe and issue a warning.
     rule3 = ctrl.Rule(ml_prob["medium"], risk_score["warning"])
@@ -104,7 +107,7 @@ if __name__ == "__main__":
     print("Testing fuzzy_translator.py locally...\n")
 
     print("Scenario A: ML Prob = 0.12, Cholesterol = 180 (Normal)")
-    result_a = generate_linguistic_inference(0.12, 180)
+    result_a = generate_linguistic_inference(0.12, 240)
     print(f"Result: {result_a}\n")
 
     print("Scenario B: ML Prob = 0.20, Cholesterol = 350 (High)")
