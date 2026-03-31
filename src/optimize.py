@@ -50,9 +50,9 @@ def bayesian_optimization(
         )
         return scores.mean()
 
-    print("Starting Bayesian Optimization (Finding the best hyperparameters)... 🧠")
+    print("Starting Bayesian Optimization ...")
 
-    # Mute Optuna's print statements so it doesn't flood your terminal
+    # Mute Optuna's print statements so it doesn't flood the terminal
     optuna.logging.set_verbosity(optuna.logging.WARNING)
 
     study = optuna.create_study(direction="maximize")
