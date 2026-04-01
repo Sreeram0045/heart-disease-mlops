@@ -11,8 +11,8 @@ def build_fuzzy_system():
     # 1. Antecedents (Inputs) and Consequent (Output)
     # ML Probability ranges from 0.0 to 1.0
     ml_prob = ctrl.Antecedent(np.arange(0, 1.01, 0.01), "ml_prob")
-    # Raw Cholesterol usually ranges from ~100 to ~600
-    cholesterol = ctrl.Antecedent(np.arange(0, 601, 1), "cholesterol")
+    # Raw Cholesterol usually ranges from ~50(in certain cases) to ~600
+    cholesterol = ctrl.Antecedent(np.arange(50, 601, 1), "cholesterol")
     # Our final Fuzzy Risk Score will be a 1-10 scale
     risk_score = ctrl.Consequent(np.arange(0, 10.1, 0.1), "risk_score")
 
@@ -24,7 +24,7 @@ def build_fuzzy_system():
     ml_prob["high"] = fuzz.trapmf(ml_prob.universe, [0.5, 0.7, 1.0, 1.0])
 
     # Cholesterol Mappings (Using standard clinical thresholds)
-    cholesterol["normal"] = fuzz.trapmf(cholesterol.universe, [0, 0, 200, 240])
+    cholesterol["normal"] = fuzz.trapmf(cholesterol.universe, [50, 50, 200, 240])
     cholesterol["borderline"] = fuzz.trimf(cholesterol.universe, [200, 240, 280])
     cholesterol["high"] = fuzz.trapmf(cholesterol.universe, [240, 280, 600, 600])
 
